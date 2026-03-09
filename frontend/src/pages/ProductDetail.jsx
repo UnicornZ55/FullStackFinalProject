@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "../api/axios";
 import { useCartStore } from "../store/useCartStore";
-
+import { useNavigate } from "react-router-dom"
 import CommentSection from "../components/comments/CommentSection";
 
 export default function ProductDetail() {
 
   const { id } = useParams();
+  const navigate = useNavigate();
   const add = useCartStore((s) => s.add);
 
   const [product,setProduct] = useState(null);
@@ -17,25 +18,44 @@ export default function ProductDetail() {
 
     const fetchProduct = async ()=>{
 
-      const res = await axios.get(`/products/${id}`);
+      try{
 
-      setProduct(res.data);
+        const res = await axios.get(`/products/${id}`)
 
-      setLoading(false);
+        setProduct(res.data)
+
+      }
+      catch(err){
+
+        setProduct(null)
+
+      }
+      finally{
+
+        setLoading(false)
+
+      }
+
     }
 
-    fetchProduct();
+    fetchProduct()
 
   },[id])
+  
 
   if(loading) return <p className="p-6">Loading...</p>
 
   if(!product) return <p className="p-6">Product not found</p>
-
+  
+  if(!product){
+    return <p className="p-6">Product not found</p>
+  }
   return(
 
     <div className="max-w-6xl mx-auto p-6">
-
+      <button onClick={()=>navigate(-1)}>
+        Back
+      </button>
       <div className="grid md:grid-cols-2 gap-10">
 
         {/* image */}

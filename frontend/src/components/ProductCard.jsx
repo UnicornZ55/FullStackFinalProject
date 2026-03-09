@@ -10,6 +10,15 @@ export default function ProductCard({ product }) {
     <div className="border p-4 rounded shadow hover:shadow-xl transition duration-300">
 
       <Link to={`/product/${product._id}`}>
+        <div className="border rounded p-4 bg-white mb-2">
+
+          <img
+            src={product.image}
+            alt={product.name}
+            className="w-full object-contain"
+          />
+
+        </div>
 
         <h3 className="font-bold text-lg mb-2">
           {product.name}

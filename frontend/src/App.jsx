@@ -3,6 +3,7 @@ import { ThemeProvider, ThemeContext } from "./context/ThemeContext"
 import { useContext } from "react"
 
 import Navbar from "./components/Navbar"
+import ProtectedRoute from "./components/ProtectedRoute"
 
 import Home from "./pages/Home"
 import Shop from "./pages/Shop"
@@ -11,7 +12,6 @@ import ProductDetail from "./pages/ProductDetail"
 import Login from "./pages/Login"
 import Dashboard from "./pages/Dashboard"
 import Feedback from "./pages/Feedback"
-
 
 function Layout(){
 
@@ -41,10 +41,16 @@ function Layout(){
 
         <Route path="/cart" element={<Cart/>}/>
 
-        <Route path="/dashboard" element={<Dashboard/>}/>
+        <Route
+          path="/dashboard"
+          element={
+          <ProtectedRoute role = "admin">
+            <Dashboard/>
+          </ProtectedRoute>
+          }
+        />
 
         <Route path="/feedback" element={<Feedback/>}/>
-
       </Routes>
 
     </div>

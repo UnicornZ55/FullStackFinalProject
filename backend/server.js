@@ -24,6 +24,7 @@ app.use("/api/auth", authRoutes)
 app.use("/api/products", productRoutes)
 app.use("/api/orders", orderRoutes)
 app.use("/api/feedback", feedbackRoutes)
+app.use("/images", express.static("images"));
 
 app.get("/api/health", (req,res)=>{
  res.json({
@@ -31,6 +32,10 @@ app.get("/api/health", (req,res)=>{
   memory:process.memoryUsage(),
   time:new Date()
  })
+})
+
+app.get("/",(req,res)=>{
+ res.send("PetVerse API running")
 })
 
 app.listen(process.env.PORT, ()=>console.log("Server running"))
