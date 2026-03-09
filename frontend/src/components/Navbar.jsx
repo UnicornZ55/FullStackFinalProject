@@ -5,25 +5,18 @@ import { useContext } from "react";
 import { ThemeContext } from "../context/ThemeContext";
 
 export default function Navbar() {
+
   const navigate = useNavigate();
 
-  // Zustand stores (Function 2.3)
+  // Zustand stores
   const cartItems = useCartStore((s) => s.items);
   const user = useAuthStore((s) => s.user);
   const setUser = useAuthStore((s) => s.setUser);
 
-  // Theme context (Function 2.1)
-  const { dark, setDark } = useContext(ThemeContext);
+  // Theme Context
+  const { config, toggleTheme, changeColor } = useContext(ThemeContext);
 
-  const logoutHandler = async () => {
-    try {
-      // optional: call backend logout (Function 5.5)
-      await fetch("http://localhost:5000/api/auth/logout", {
-        method: "POST",
-        credentials: "include",
-      });
-    } catch (err) {}
-
+  const logoutHandler = () => {
     setUser(null);
     navigate("/");
   };
@@ -31,54 +24,74 @@ export default function Navbar() {
   return (
     <nav
       className={`flex items-center justify-between px-6 py-3 shadow-md ${
-        dark ? "bg-gray-900 text-white" : "bg-white text-black"
+        config.theme === "dark"
+          ? "bg-gray-900 text-white"
+          : "bg-white text-black"
       }`}
     >
+
       {/* LEFT SIDE */}
-      <div className="flex items-center gap-4 font-semibold text-lg">
-        <Link to="/" className="hover:text-blue-500">
+      <div className="flex items-center gap-6 font-semibold text-lg">
+
+        <Link
+          to="/"
+          style={{ color: config.primaryColor }}
+        >
           🐶 PetVerse
         </Link>
 
-        <Link to="/shop" className="hover:text-blue-500">
-          Shop
-        </Link>
+        <Link to="/shop">Shop</Link>
+        
+        <Link to="/dashboard">Dashboard</Link>
 
-        <Link to="/feedback" className="hover:text-blue-500">
-          Feedback
-        </Link>
+        <Link to="/feedback">Feedback</Link>
+
       </div>
 
       {/* RIGHT SIDE */}
       <div className="flex items-center gap-4">
-        {/* 🌙 Theme Toggle (Function 2.1) */}
+
+        {/* 🎨 Color Picker */}
+        <input
+          type="color"
+          value={config.primaryColor}
+          onChange={(e) => changeColor(e.target.value)}
+          className="w-8 h-8 border rounded"
+        />
+
+        {/* 🌙 Theme Toggle */}
         <button
-          onClick={() => setDark(!dark)}
-          className="border px-2 py-1 rounded"
+          onClick={toggleTheme}
+          className="border px-3 py-1 rounded"
         >
-          {dark ? "Light" : "Dark"}
+          {config.theme === "dark" ? "Light" : "Dark"}
         </button>
 
-        {/* 🛒 Cart (Function 2.3 Zustand global state) */}
+        {/* 🛒 Cart */}
         <Link to="/cart" className="relative">
+
           🛒 Cart
+
           {cartItems.length > 0 && (
-            <span className="ml-1 text-sm text-red-500">
+            <span
+              className="ml-1 text-sm"
+              style={{ color: config.primaryColor }}
+            >
               ({cartItems.length})
             </span>
           )}
+
         </Link>
 
-        {/* 🔐 Auth UI (Function 2.5 Protected + RBAC UI) */}
+        {/* 🔐 Auth */}
         {user ? (
           <>
-            <Link to="/dashboard" className="hover:text-blue-500">
-              Dashboard
-            </Link>
+            <Link to="/dashboard">Dashboard</Link>
 
             <button
               onClick={logoutHandler}
-              className="bg-red-500 text-white px-3 py-1 rounded"
+              style={{ background: config.primaryColor }}
+              className="text-white px-3 py-1 rounded"
             >
               Logout
             </button>
@@ -86,12 +99,15 @@ export default function Navbar() {
         ) : (
           <Link
             to="/login"
-            className="bg-blue-500 text-white px-3 py-1 rounded"
+            style={{ background: config.primaryColor }}
+            className="text-white px-3 py-1 rounded"
           >
             Login
           </Link>
         )}
+
       </div>
+
     </nav>
   );
 }

@@ -17,4 +17,12 @@ router.post("/", protect, restrictTo("admin"), async (req, res) => {
   res.json(product)
 })
 
+//Product details
+router.get("/:id", async (req,res)=>{
+
+  const product = await Product.findById(req.params.id)
+
+  res.json(product)
+
+})
 export default router
