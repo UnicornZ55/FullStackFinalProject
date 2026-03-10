@@ -1,10 +1,36 @@
 import { useCartStore } from "../store/useCartStore";
+import axios from "../api/axios"
 
 export default function Cart() {
 
   const items = useCartStore((s) => s.items);
   const remove = useCartStore((s) => s.remove);
   const clear = useCartStore((s) => s.clear);
+  const checkout = async () => {
+
+    try{
+
+      for(const item of items){
+
+        await axios.post("/orders",{
+          productId: item._id,
+          quantity: item.qty
+        })
+
+      }
+
+      alert("Order successful")
+
+      clear()
+
+    }
+    catch(err){
+
+      alert(err.response?.data?.message || "Order failed")
+
+    }
+
+  }
 
   const subtotal = items.reduce(
     (sum, item) => sum + item.price * item.qty,
@@ -66,6 +92,19 @@ export default function Cart() {
             }}
           >
             Clear Cart
+          </button>
+          
+          <button
+            onClick={checkout}
+            style={{
+            marginTop:"10px",
+            background:"green",
+            color:"white",
+            padding:"8px",
+            marginLeft:"10px"
+            }}
+          >
+            Checkout
           </button>
 
         </div>

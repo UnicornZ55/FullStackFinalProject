@@ -13,6 +13,11 @@ const productSchema = new mongoose.Schema(
     required: true,
     min: 0
   },
+  
+  discountPercent:{           // ⭐ % ส่วนลด
+    type:Number,
+    default:0
+  },
 
   category: {
     type: String,
@@ -33,13 +38,31 @@ const productSchema = new mongoose.Schema(
     enum: ["puppy", "adult", "senior"]
   },
 
+  tags: {
+    type: [String],
+    default: []
+  },
+
   image: String,
 
   description: String
 },
 {
-  timestamps: true
+  //function 4.5 C4
+  timestamps: true,
+  toJSON:{virtuals:true},
+  toObject:{virtuals:true}
 }
 );
+
+productSchema.virtual("salePrice").get(function(){
+
+ if(!this.price) return 0
+
+ return Math.round(
+  this.price * (1 - this.discountPercent/100)
+ )
+
+})
 
 export default mongoose.model("Product", productSchema);
