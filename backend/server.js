@@ -106,6 +106,7 @@ app.get("/vault/:filename",(req,res)=>{
     stream.pipe(res)
 
 })
+app.use(errorHandler)
 
 const PORT = 8080
 

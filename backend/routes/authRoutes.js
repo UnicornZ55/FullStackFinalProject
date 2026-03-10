@@ -6,34 +6,51 @@ const router = express.Router()
 
 router.post("/login", async (req,res)=>{
 
-    const {email,password} = req.body
+ try{
 
-    const user = await User.findOne({email})
+  const {email,password} = req.body
 
-    if(!user){
-        return res.status(401).json({message:"Invalid email"})
-    }
+  // 🔹 ต้อง select password
+  const user = await User
+   .findOne({email})
+   .select("+password")
 
-    //ตรวจ soft deleted
-    if(user.isDeleted){
-        return res.status(403).json({message:"User account deleted"})
-    }
+  if(!user){
+   return res.status(401).json({
+    message:"Invalid email or password"
+   })
+  }
 
-    // 🔹 bcrypt compare
-    const isMatch = await user.matchPassword(password)
+  // soft delete check
+  if(user.isDeleted){
+   return res.status(403).json({
+    message:"User account deleted"
+   })
+  }
 
-    if(!isMatch){
-        return res.status(401).json({message:"Invalid password"})
-    }
+  const isMatch = await user.matchPassword(password)
 
-    const token = generateToken(res,user._id)
+  if(!isMatch){
+   return res.status(401).json({
+    message:"Invalid email or password"
+   })
+  }
 
-    res.json({
-        _id:user._id,
-        email:user.email,
-        role:user.role,
-        token
-    })
+  // generate cookie token
+  generateToken(res,user._id)
+
+  res.json({
+   _id:user._id,
+   email:user.email,
+   role:user.role
+  })
+
+ }
+ catch(err){
+
+  res.status(500).json({message:"Server error"})
+
+ }
 
 })
 

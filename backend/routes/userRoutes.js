@@ -16,11 +16,15 @@ router.get("/", protect, restrictTo("admin"), async(req,res)=>{
 })
 
 //post user (register)
-router.post("/", async(req,res)=>{
+router.post("/", async (req,res)=>{
 
  try{
 
   const {username,email,password,role} = req.body
+
+  if(!username || !email || !password){
+   return res.status(400).json({message:"Missing required fields"})
+  }
 
   const user = await User.create({
    username,
@@ -29,10 +33,23 @@ router.post("/", async(req,res)=>{
    role
   })
 
-  res.json(user)
+  res.status(201).json({
+   _id:user._id,
+   email:user.email,
+   role:user.role
+  })
 
  }
  catch(err){
+    
+    console.error(err)
+
+  if(err.code === 11000){
+   return res.status(400).json({
+    message:"Email already exists"
+   })
+  }
+
   res.status(500).json({message:"Server error"})
  }
 
