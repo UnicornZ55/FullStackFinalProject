@@ -3,19 +3,18 @@ import jwt from "jsonwebtoken"
 const generateToken = (res, id) => {
 
  const token = jwt.sign(
-  { userId: id },
+  { id },                         // C4 payload
   process.env.JWT_SECRET,
-  { expiresIn: "7d" }
+  { expiresIn: "15m" }            // C3 short expiry
  )
 
  res.cookie("jwt", token, {
   httpOnly: true,
   secure: false,
   sameSite: "strict",
-  maxAge: 7 * 24 * 60 * 60 * 1000
+  maxAge: 15 * 60 * 1000
  })
 
- return token
 }
 
 export default generateToken

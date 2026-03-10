@@ -46,14 +46,14 @@ const userSchema = new mongoose.Schema(
 
 
 // ✅ C1 + C3 + C4
-userSchema.pre("save", async function(next){
+userSchema.pre("save", async function(){
 
   // prevent double hashing
-  if(!this.isModified("password")) return next()
+  if(!this.isModified("password")) return 
 
   this.password = await bcrypt.hash(this.password,12)
 
-  next()
+  
 })
 
 
