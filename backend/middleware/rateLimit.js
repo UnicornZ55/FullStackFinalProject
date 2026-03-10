@@ -1,3 +1,6 @@
+const WINDOW = 10000;
+const LIMIT = 5;
+
 const ipTracker = {};
 
 export const rateLimit = (req, res, next) => {
@@ -6,16 +9,28 @@ export const rateLimit = (req, res, next) => {
 
   if (!ipTracker[ip]) {
     ipTracker[ip] = { count: 1, start: now };
-  } else {
-    ipTracker[ip].count++;
+    return next();
   }
 
-  if (ipTracker[ip].count > 5 && now - ipTracker[ip].start < 10000) {
-    return res.status(429).json({ message: "Too many requests" });
-  }
-
-  if (now - ipTracker[ip].start > 10000) {
+  const record = ipTracker[ip];
+  // Function 3.3 C4
+  if (now - record.start > WINDOW) {
+    delete ipTracker[ip];
     ipTracker[ip] = { count: 1, start: now };
+    return next();
+  }
+
+  record.count++;
+
+  if (record.count > LIMIT) {
+    const remaining = Math.ceil(
+      (record.start + WINDOW - now) / 1000
+    );
+
+    return res.status(429).json({
+      message: "Too many requests",
+      retry_after: remaining,
+    });
   }
 
   next();

@@ -1,19 +1,45 @@
 import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema(
-  {
-    name: String,
-    price: Number,
-    category: String,
-    stock: Number,
-    brand: String,
-    age: String,          // puppy / adult / senior
-    image: String,        // URL รูป
-    description: String
+{
+  name: {
+    type: String,
+    required: true,
+    unique: true
   },
-  {
-    timestamps: true   // ⭐ เพิ่ม createdAt และ updatedAt
-  }
+
+  price: {
+    type: Number,
+    required: true,
+    min: 0
+  },
+
+  category: {
+    type: String,
+    enum: ["food", "toy", "accessory"],
+    required: true
+  },
+
+  stock: {
+    type: Number,
+    min: 0,
+    default: 0
+  },
+
+  brand: String,
+
+  age: {
+    type: String,
+    enum: ["puppy", "adult", "senior"]
+  },
+
+  image: String,
+
+  description: String
+},
+{
+  timestamps: true
+}
 );
 
 export default mongoose.model("Product", productSchema);

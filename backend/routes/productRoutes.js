@@ -6,12 +6,21 @@ import mongoose from "mongoose"
 
 const router = express.Router()
 
-// GET all products
+// GET all products + filter price
 router.get("/", async (req,res)=>{
 
   try{
 
-    const products = await Product.find()
+    const { minPrice } = req.query
+
+    let filter = {}
+
+    // ⭐ filter price ตาม checklist 4.1
+    if(minPrice){
+      filter.price = { $gte: Number(minPrice) }
+    }
+
+    const products = await Product.find(filter)
 
     res.json(products)
 
@@ -28,18 +37,27 @@ router.get("/", async (req,res)=>{
 // CREATE product (admin only)
 router.post("/", protect, restrictTo("admin"), async (req,res)=>{
 
-  try{
+ try{
 
-    const product = await Product.create(req.body)
+  const product = await Product.create(req.body)
 
-    res.json(product)
+  res.status(201).json(product)
 
+ }
+ catch(err){
+
+  // validation error
+  if(err.name === "ValidationError"){
+   return res.status(400).json({message: err.message})
   }
-  catch(err){
 
-    res.status(500).json({message:"Server error"})
-
+  // duplicate key (unique name)
+  if(err.code === 11000){
+   return res.status(400).json({message:"Product name already exists"})
   }
+
+  res.status(500).json({message:"Server error"})
+ }
 
 })
 
