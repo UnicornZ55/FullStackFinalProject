@@ -1,91 +1,102 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 export default function TaskRunner() {
-
+  const taskCount = 10;
   const [tasks, setTasks] = useState(
-    Array.from({ length: 10 }, (_, i) => ({
+    Array.from({ length: taskCount }, (_, i) => ({
       id: i,
       progress: 0
     }))
   );
+  const [isRunning, setIsRunning] = useState(false);
+
+  const runningRef = useRef(0);
+  const indexRef = useRef(0);
 
   const runTasks = () => {
+    if (isRunning) return;
 
-    let running = 0;
-    let index = 0;
+    setTasks(Array.from({ length: 10 }, (_, i) => ({ id: i, progress: 0 })));
+    setIsRunning(true);
+
+    runningRef.current = 0;
+    indexRef.current = 0;
 
     const startTask = (i) => {
-
-      running++;
+      runningRef.current += 1;
 
       const interval = setInterval(() => {
-
-        setTasks(prev => {
-
+        setTasks((prev) => {
           const copy = [...prev];
+          const nextProgress = Math.min(copy[i].progress + 10, 100);
 
           copy[i] = {
             ...copy[i],
-            progress: copy[i].progress + 10
+            progress: nextProgress
           };
 
-          if (copy[i].progress >= 100) {
-
+          if (nextProgress >= 100) {
             clearInterval(interval);
-            running--;
+            runningRef.current -= 1;
 
-            if (index < 10) {
-              startTask(index++);
+            if (indexRef.current < copy.length) {
+              startTask(indexRef.current++);
+            } else if (runningRef.current === 0) {
+              setIsRunning(false);
             }
-
           }
 
           return copy;
-
         });
-
-      }, 300);
-
+      }, 250);
     };
 
-    while (running < 2 && index < 10) {
-      startTask(index++);
+    while (runningRef.current < 2 && indexRef.current < taskCount) {
+      startTask(indexRef.current++);
     }
-
   };
 
   return (
-
-    <div className="p-4">
-
-      <button
-        onClick={runTasks}
-        className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
-      >
-        Start Tasks
-      </button>
-
-      {tasks.map(t => (
-
-        <div key={t.id} className="mb-3">
-
-          <p>Task {t.id}</p>
-
-          <div className="w-64 bg-gray-200 h-3 rounded">
-
-            <div
-              className="bg-green-500 h-3 rounded"
-              style={{ width: `${t.progress}%` }}
-            />
-
-          </div>
-
+    <div className="space-y-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="text-xl font-semibold">Task Runner</h2>
+          <p className="text-sm text-gray-600 dark:text-gray-300">
+            Run background tasks and watch their progress.
+          </p>
         </div>
 
-      ))}
+        <button
+          onClick={runTasks}
+          disabled={isRunning}
+          className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300"
+        >
+          {isRunning ? "Running…" : "Start Tasks"}
+        </button>
+      </div>
 
+      <div className="grid gap-4 sm:grid-cols-2">
+        {tasks.map((t) => (
+          <div
+            key={t.id}
+            className="rounded-lg border border-gray-200 bg-gray-50 p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900"
+          >
+            <div className="flex items-center justify-between">
+              <span className="font-medium">Task {t.id + 1}</span>
+              <span className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+                {t.progress}%
+              </span>
+            </div>
+
+            <div className="mt-3 h-3 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+              <div
+                className="h-full rounded-full bg-emerald-500 transition-all duration-200"
+                style={{ width: `${t.progress}%` }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
-
   );
-
 }
