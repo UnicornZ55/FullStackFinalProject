@@ -1,4 +1,4 @@
-const WINDOW = 10000;
+const WINDOW = 15 * 60 * 1000; // 15 minutes
 const LIMIT = 5;
 
 const ipTracker = {};

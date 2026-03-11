@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken"
 import User from "../models/User.js"
+import { isTokenBlacklisted } from "../utils/tokenBlacklist.js"
 
 export const protect = async (req,res,next)=>{
 
@@ -16,6 +17,19 @@ export const protect = async (req,res,next)=>{
    req.headers.authorization.startsWith("Bearer")
   ){
    token = req.headers.authorization.split(" ")[1]
+  }
+
+  if(!token){
+   return res.status(401).json({
+    message:"Not authorized, no token"
+   })
+  }
+
+  // C5: Check blacklisted tokens first (logout invalidation)
+  if(isTokenBlacklisted(token)){
+   return res.status(401).json({
+    message:"Invalid token"
+   })
   }
 
   if(!token){
