@@ -76,4 +76,67 @@ router.delete("/:id", protect, restrictTo("admin"), async(req,res)=>{
 
 })
 
+// // update current user (for C3 test)
+
+// router.put("/me", protect, async (req,res)=>{
+
+//  try{
+
+//   const user = await User.findById(req.user._id)
+
+//   if(!user){
+//    return res.status(404).json({message:"User not found"})
+//   }
+
+//   if(req.body.username){
+//    user.username = req.body.username
+//   }
+
+//   await user.save()
+
+//   res.json({
+//    message:"Profile updated",
+//    username:user.username
+//   })
+
+//  }
+//  catch(err){
+
+//   res.status(500).json({message:"Server error"})
+
+//  }
+
+// })
+
+// change password (for C2 test)
+
+router.put("/change-password", protect, async (req,res)=>{
+
+ try{
+
+  const { password } = req.body
+
+  const user = await User.findById(req.user._id).select("+password")
+
+  if(!user){
+   return res.status(404).json({message:"User not found"})
+  }
+
+  user.password = password
+
+  await user.save()
+
+  res.json({
+   message:"Password updated"
+  })
+
+ }
+ catch(err){
+
+  res.status(500).json({message:"Server error"})
+
+ }
+
+})
+
 export default router

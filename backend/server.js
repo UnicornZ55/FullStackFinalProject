@@ -15,6 +15,7 @@ import { rateLimit } from "./middleware/rateLimit.js"
 import { errorHandler } from "./middleware/errorHandler.js"
 import externalRoutes from "./routes/externalRoutes.js"
 import userRoutes from "./routes/userRoutes.js"
+import testRoutes from "./routes/testRoutes.js"
 
 dotenv.config()
 connectDB()
@@ -34,6 +35,7 @@ app.use("/api/feedback", feedbackRoutes)
 app.use("/images", express.static("images"));
 app.use("/external", externalRoutes)
 app.use("/api/users", userRoutes)
+app.use("/api/test", testRoutes)
 
 app.get("/api/health", (req,res)=>{
  res.json({

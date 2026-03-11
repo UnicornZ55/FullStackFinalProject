@@ -15,7 +15,7 @@ router.post("/", protect, async (req,res)=>{
  try{
 
   const { productId, quantity } = req.body
-
+  console.log(req.user)
   if(!mongoose.Types.ObjectId.isValid(productId)){
    await session.abortTransaction()
    session.endSession()
