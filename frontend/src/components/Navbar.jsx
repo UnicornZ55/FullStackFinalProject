@@ -33,12 +33,21 @@ export default function Navbar(){
      Shop
     </Link>
 
-    {/* admin only */}
+    {user?.role === "admin" || user?.role === "manager" ? (
+      <Link to="/inventory">
+        Inventory
+      </Link>
+    ) : null}
 
+    <Link to="/dynamic-form">
+      Join Us
+    </Link>
+
+    {/* admin only */}
     {user?.role === "admin" && (
-     <Link to="/dashboard">
-      Dashboard
-     </Link>
+      <Link to="/dashboard">
+        Dashboard
+      </Link>
     )}
 
     <Link to="/feedback">
@@ -46,7 +55,6 @@ export default function Navbar(){
     </Link>
 
    </div>
-
 
    {/* RIGHT */}
 
@@ -109,13 +117,22 @@ export default function Navbar(){
 
     ) : (
 
-     <Link
-      to="/login"
-      className="text-white px-3 py-1 rounded"
-      style={{background:config.primaryColor}}
-     >
-      Login
-     </Link>
+     <>
+      <Link
+       to="/register"
+       className="text-white px-3 py-1 rounded"
+       style={{background:config.primaryColor}}
+      >
+       Register
+      </Link>
+      <Link
+       to="/login"
+       className="text-white px-3 py-1 rounded"
+       style={{background:config.primaryColor}}
+      >
+       Login
+      </Link>
+     </>
 
     )}
 

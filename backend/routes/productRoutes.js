@@ -233,5 +233,51 @@ router.get("/:id", async (req,res)=>{
 
 })
 
+// PATCH product (partial update)
+router.patch("/:id", protect, restrictTo("admin", "manager"), async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    const updates = req.body;
+
+    const product = await Product.findByIdAndUpdate(id, updates, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// DELETE product
+router.delete("/:id", protect, restrictTo("admin", "manager"), async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    const product = await Product.findByIdAndDelete(id);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    res.json({ message: "Deleted" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 export default router

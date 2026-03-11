@@ -1,5 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import axios from "../api/axios";
+import { isCancel } from "axios";
+import debounce from "lodash.debounce";
 import FilterSidebar from "../components/FilterSidebar";
 import ProductGrid from "../components/ProductGrid";
 import Pagination from "../components/Pagination";
@@ -14,6 +16,7 @@ export default function Shop() {
 
   // 🔍 search
   const [search, setSearch] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   // 🎯 multi-filter
   const [filters, setFilters] = useState({
@@ -28,40 +31,61 @@ export default function Shop() {
   const [page, setPage] = useState(1);
   const perPage = 8;
 
-  // fetch products
-  useEffect(() => {
+  // request cancellation (race condition safe)
+  const abortControllerRef = useRef(null);
 
-    const fetchProducts = async () => {
+  const fetchProducts = useCallback(
+    async (query) => {
+      abortControllerRef.current?.abort();
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+
+      setLoading(true);
+      setError(null);
+
       try {
-
-        setLoading(true);
-
-        const res = await axios.get("/products");
+        const res = await axios.get("/products", {
+          params: query ? { search: query } : {},
+          signal: controller.signal,
+        });
 
         setProducts(res.data);
-
       } catch (err) {
-
+        if (isCancel(err)) return;
         setError("Error loading products");
-
       } finally {
-
         setLoading(false);
-
       }
+    },
+    []
+  );
+
+  // Debounced search to avoid firing on every keystroke
+  const debouncedSearch = useRef(
+    debounce((value) => {
+      setPage(1);
+      setSearchQuery(value);
+    }, 600)
+  ).current;
+
+  useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+      abortControllerRef.current?.abort();
     };
+  }, [debouncedSearch]);
 
-    fetchProducts();
-
-  }, []);
+  useEffect(() => {
+    fetchProducts(searchQuery);
+  }, [fetchProducts, searchQuery]);
 
   // 🔍 filter + search
   const filtered = useMemo(() => {
     return products.filter((p) => {
 
       const matchSearch =
-        search === "" ||
-        p.name.toLowerCase().includes(search.toLowerCase());
+        searchQuery === "" ||
+        p.name.toLowerCase().includes(searchQuery.toLowerCase());
 
       const matchCategory =
         filters.category.length === 0 ||
@@ -86,18 +110,35 @@ export default function Shop() {
         matchPrice
       );
     });
-  }, [products, filters, search]);
+  }, [products, filters, searchQuery]);
 
   // pagination
   const totalPages = Math.ceil(filtered.length / perPage);
   const start = (page - 1) * perPage;
   const paginated = filtered.slice(start, start + perPage);
 
-  // ✅ loading screen
+  // ✅ loading skeleton
   if (loading) {
     return (
-      <div className="text-center py-20">
-        <p className="text-gray-500">Loading...</p>
+      <div className="max-w-7xl mx-auto px-6 py-6">
+        <div className="space-y-4">
+          <div className="h-8 w-1/3 rounded bg-gray-200 animate-pulse" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 6 }).map((_, idx) => (
+              <div
+                key={idx}
+                className="rounded border border-gray-200 bg-white p-4 shadow-sm"
+              >
+                <div className="h-40 w-full bg-gray-200 animate-pulse" />
+                <div className="mt-4 space-y-2">
+                  <div className="h-4 w-3/4 bg-gray-200 animate-pulse" />
+                  <div className="h-4 w-1/2 bg-gray-200 animate-pulse" />
+                  <div className="h-8 w-1/2 bg-gray-200 animate-pulse" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
@@ -105,8 +146,14 @@ export default function Shop() {
   // ✅ error screen
   if (error) {
     return (
-      <div className="text-center py-20">
-        <p className="text-red-500">{error}</p>
+      <div className="max-w-7xl mx-auto px-6 py-20 text-center">
+        <p className="text-red-500 mb-4">{error}</p>
+        <button
+          className="rounded bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700"
+          onClick={() => fetchProducts(searchQuery)}
+        >
+          Retry
+        </button>
       </div>
     );
   }
@@ -122,8 +169,8 @@ export default function Shop() {
           className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring"
           value={search}
           onChange={(e) => {
-            setPage(1);
             setSearch(e.target.value);
+            debouncedSearch(e.target.value);
           }}
         />
       </div>
@@ -147,7 +194,7 @@ export default function Shop() {
           {/* ✅ empty state */}
           {filtered.length === 0 && (
             <p className="text-gray-400 mb-6">
-              No results found for "{search}"
+              No products found for "{searchQuery}"
             </p>
           )}
 

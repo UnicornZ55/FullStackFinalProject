@@ -47,8 +47,8 @@ export const logout = async (req, res) => {
 
   res.cookie("jwt", "", {
     httpOnly: true,
-    secure: false,
-    sameSite: "strict",
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "none",
     maxAge: 0,
   });
 

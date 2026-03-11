@@ -10,9 +10,12 @@ export default function ProtectedRoute({ children, role }) {
   return <Navigate to="/login" />
  }
 
- // login แล้วแต่ role ไม่ตรง
- if (role && user.role !== role) {
-  return <Navigate to="/" />
+ // role สามารถเป็น string หรือ array
+ if (role) {
+  const allowed = Array.isArray(role) ? role : [role]
+  if (!allowed.includes(user.role)) {
+    return <Navigate to="/" />
+  }
  }
 
  return children

@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { ThemeProvider, ThemeContext } from "./context/ThemeContext"
 import { useContext } from "react"
+import { Toaster } from "react-hot-toast"
 
 import Navbar from "./components/Navbar"
 import ProtectedRoute from "./components/ProtectedRoute"
@@ -12,6 +13,10 @@ import ProductDetail from "./pages/ProductDetail"
 import Login from "./pages/Login"
 import Dashboard from "./pages/Dashboard"
 import Feedback from "./pages/Feedback"
+import Register from "./pages/Register"
+import Inventory from "./pages/Inventory"
+import DynamicForm from "./pages/DynamicForm"
+import { RegisterProvider } from "./context/RegisterContext"
 
 function Layout(){
 
@@ -39,14 +44,27 @@ function Layout(){
 
         <Route path="/login" element={<Login/>}/>
 
+        <Route path="/register" element={<Register/>}/>
+
+        <Route
+          path="/inventory"
+          element={
+            <ProtectedRoute role={["admin", "manager"]}>
+              <Inventory />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="/dynamic-form" element={<DynamicForm />} />
+
         <Route path="/cart" element={<Cart/>}/>
 
         <Route
           path="/dashboard"
           element={
-          <ProtectedRoute role = "admin">
-            <Dashboard/>
-          </ProtectedRoute>
+            <ProtectedRoute role="admin">
+              <Dashboard/>
+            </ProtectedRoute>
           }
         />
 
@@ -65,11 +83,12 @@ export default function App(){
 
     <ThemeProvider>
 
-      <BrowserRouter>
+      <RegisterProvider>
+        <BrowserRouter>
 
-        <Layout/>
-
-      </BrowserRouter>
+          <Layout/>        <Toaster position="top-right" />
+        </BrowserRouter>
+      </RegisterProvider>
 
     </ThemeProvider>
 
