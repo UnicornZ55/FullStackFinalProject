@@ -11,7 +11,7 @@ export default function Navbar(){
 
  const cartItems = useCartStore(s=>s.items)
 
- const {config,toggleTheme} = useContext(ThemeContext)
+ const {config,toggleTheme,changeColor} = useContext(ThemeContext)
 
  return(
 
@@ -59,6 +59,14 @@ export default function Navbar(){
    {/* RIGHT */}
 
    <div className="flex gap-4 items-center">
+
+    {/* 🎨 Color Picker */}
+        <input
+          type="color"
+          value={config.primaryColor}
+          onChange={(e) => changeColor(e.target.value)}
+          className="w-8 h-8 border rounded"
+        />
 
     {/* theme toggle */}
 
