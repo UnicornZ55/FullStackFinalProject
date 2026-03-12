@@ -43,6 +43,10 @@ export default function Navbar(){
       Join Us
     </Link>
 
+    <Link to="/link-in-bio">
+      LinkInBio
+    </Link>
+
     {/* admin only */}
     {user?.role === "admin" && (
       <Link to="/dashboard">

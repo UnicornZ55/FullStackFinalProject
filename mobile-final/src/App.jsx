@@ -16,6 +16,7 @@ import Feedback from "./pages/Feedback"
 import Register from "./pages/Register"
 import Inventory from "./pages/Inventory"
 import DynamicForm from "./pages/DynamicForm"
+import LinkInBio from "./pages/LinkInBio"
 import { RegisterProvider } from "./context/RegisterContext"
 
 function Layout(){
@@ -28,7 +29,7 @@ function Layout(){
       className={`min-h-screen transition-colors duration-300 ${
         config.theme === "dark"
           ? "bg-gray-900 text-white"
-          : "bg-[#E8CDB5] text-black"
+          : "bg-[#FFE6C9] text-black"
       }`}
     >
 
@@ -56,6 +57,8 @@ function Layout(){
         />
 
         <Route path="/dynamic-form" element={<DynamicForm />} />
+
+        <Route path="/link-in-bio" element={<LinkInBio />} />
 
         <Route path="/cart" element={<Cart/>}/>
 
