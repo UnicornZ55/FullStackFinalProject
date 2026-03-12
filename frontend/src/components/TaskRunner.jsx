@@ -1,22 +1,34 @@
 import { useRef, useState } from "react";
 
+function createTasks(taskCount) {
+  return Array.from({ length: taskCount }, (_, i) => ({
+    id: i,
+    progress: 0,
+    status: "pending"
+  }));
+}
+
+function createTaskProfiles(taskCount) {
+  return Array.from({ length: taskCount }, () => ({
+    step: Math.floor(Math.random() * 9) + 4,
+    delay: Math.floor(Math.random() * 180) + 140,
+  }));
+}
+
 export default function TaskRunner() {
   const taskCount = 10;
-  const [tasks, setTasks] = useState(
-    Array.from({ length: taskCount }, (_, i) => ({
-      id: i,
-      progress: 0
-    }))
-  );
+  const [tasks, setTasks] = useState(createTasks(taskCount));
   const [isRunning, setIsRunning] = useState(false);
 
   const runningRef = useRef(0);
   const indexRef = useRef(0);
+  const taskProfilesRef = useRef(createTaskProfiles(taskCount));
 
   const runTasks = () => {
     if (isRunning) return;
 
-    setTasks(Array.from({ length: 10 }, (_, i) => ({ id: i, progress: 0 })));
+    taskProfilesRef.current = createTaskProfiles(taskCount);
+    setTasks(createTasks(taskCount));
     setIsRunning(true);
 
     runningRef.current = 0;
@@ -24,15 +36,26 @@ export default function TaskRunner() {
 
     const startTask = (i) => {
       runningRef.current += 1;
+      const profile = taskProfilesRef.current[i];
+
+      setTasks((prev) => {
+        const copy = [...prev];
+        copy[i] = {
+          ...copy[i],
+          status: "running"
+        };
+        return copy;
+      });
 
       const interval = setInterval(() => {
         setTasks((prev) => {
           const copy = [...prev];
-          const nextProgress = Math.min(copy[i].progress + 10, 100);
+          const nextProgress = Math.min(copy[i].progress + profile.step, 100);
 
           copy[i] = {
             ...copy[i],
-            progress: nextProgress
+            progress: nextProgress,
+            status: nextProgress >= 100 ? "completed" : "running"
           };
 
           if (nextProgress >= 100) {
@@ -48,7 +71,7 @@ export default function TaskRunner() {
 
           return copy;
         });
-      }, 250);
+      }, profile.delay);
     };
 
     while (runningRef.current < 2 && indexRef.current < taskCount) {
@@ -60,10 +83,8 @@ export default function TaskRunner() {
     <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-xl font-semibold">Task Runner</h2>
-          <p className="text-sm text-gray-600 dark:text-gray-300">
-            Run background tasks and watch their progress.
-          </p>
+          <h2 className="text-xl font-semibold ">Task Runner</h2>
+          
         </div>
 
         <button
@@ -79,18 +100,31 @@ export default function TaskRunner() {
         {tasks.map((t) => (
           <div
             key={t.id}
-            className="rounded-lg border border-gray-200 bg-gray-50 p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900"
+            className="rounded-lg border border-slate-700 bg-slate-950 p-4 shadow-sm"
           >
             <div className="flex items-center justify-between">
-              <span className="font-medium">Task {t.id + 1}</span>
-              <span className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+              <div>
+                <span className="font-medium text-white">Task {t.id + 1}</span>
+                <p className={`mt-1 text-[11px] font-semibold uppercase tracking-wider ${
+                  t.status === "completed"
+                    ? "text-emerald-400"
+                    : t.status === "running"
+                    ? "text-blue-300"
+                    : "text-slate-400"
+                }`}>
+                  {t.status}
+                </p>
+              </div>
+              <span className="text-xs font-semibold text-slate-300">
                 {t.progress}%
               </span>
             </div>
 
-            <div className="mt-3 h-3 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+            <div className="mt-3 h-3 w-full overflow-hidden rounded-full bg-slate-700">
               <div
-                className="h-full rounded-full bg-emerald-500 transition-all duration-200"
+                className={`h-full rounded-full transition-all duration-200 ${
+                  t.status === "completed" ? "bg-emerald-400" : "bg-blue-500"
+                }`}
                 style={{ width: `${t.progress}%` }}
               />
             </div>

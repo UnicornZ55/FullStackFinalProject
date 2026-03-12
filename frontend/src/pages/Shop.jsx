@@ -51,10 +51,12 @@ export default function Shop() {
 
         setProducts(res.data);
       } catch (err) {
-        if (isCancel(err)) return;
+        if (isCancel(err) || controller.signal.aborted) return;
         setError("Error loading products");
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
       }
     },
     []
