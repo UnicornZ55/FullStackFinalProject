@@ -47,6 +47,10 @@ export default function Navbar(){
       LinkInBio
     </Link>
 
+    <Link to="/currency-converter">
+      Currency
+    </Link>
+
     {/* admin only */}
     {user?.role === "admin" && (
       <Link to="/dashboard">

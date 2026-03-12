@@ -17,6 +17,7 @@ import Register from "./pages/Register"
 import Inventory from "./pages/Inventory"
 import DynamicForm from "./pages/DynamicForm"
 import LinkInBio from "./pages/LinkInBio"
+import CurrencyConverter from "./pages/CurrencyConverter"
 import { RegisterProvider } from "./context/RegisterContext"
 
 function Layout(){
@@ -59,6 +60,8 @@ function Layout(){
         <Route path="/dynamic-form" element={<DynamicForm />} />
 
         <Route path="/link-in-bio" element={<LinkInBio />} />
+
+        <Route path="/currency-converter" element={<CurrencyConverter />} />
 
         <Route path="/cart" element={<Cart/>}/>
 
