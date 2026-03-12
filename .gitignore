@@ -3,3 +3,5 @@ node_modules/
 dist/
 .expo/
 .vscode/
+mobile/
+Mobile-App/

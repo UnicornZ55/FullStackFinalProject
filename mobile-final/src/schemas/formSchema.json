@@ -1,0 +1,78 @@
+{
+  "title": "Volunteer Application",
+  "fields": [
+    {
+      "type": "text",
+      "name": "fullName",
+      "label": "Full Name",
+      "validation": {
+        "required": true,
+        "min": 3
+      }
+    },
+    {
+      "type": "text",
+      "name": "email",
+      "label": "Email",
+      "validation": {
+        "required": true
+      }
+    },
+    {
+      "type": "text",
+      "name": "phoneNumber",
+      "label": "Phone Number",
+      "validation": {
+        "required": true
+      }
+    },
+    {
+      "type": "select",
+      "name": "role",
+      "label": "Apply As",
+      "options": [
+        { "label": "Intern", "value": "intern" },
+        { "label": "Mentor", "value": "mentor" },
+        { "label": "Coordinator", "value": "coordinator" },
+        { "label": "Admin", "value": "admin" },
+        { "label": "Manager", "value": "manager" },
+        { "label": "Editor", "value": "editor" }
+      ],
+      "validation": {
+        "required": true
+      }
+    },
+    {
+      "type": "text",
+      "name": "admin_code",
+      "label": "Admin Code",
+      "show_if": {
+        "field": "role",
+        "equals": "admin"
+      },
+      "validation": {
+        "required": true,
+        "min": 5
+      }
+    },
+    {
+      "type": "object",
+      "name": "profile",
+      "label": "Profile",
+      "fields": [
+        {
+          "type": "text",
+          "name": "firstName",
+          "label": "First Name",
+          "validation": { "required": true }
+        },
+        {
+          "type": "text",
+          "name": "lastName",
+          "label": "Last Name",
+          "validation": { "required": true }
+        }
+      ]
+    }
+  ]
+}
