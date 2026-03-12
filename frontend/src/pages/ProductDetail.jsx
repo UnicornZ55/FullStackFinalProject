@@ -18,10 +18,26 @@ export default function ProductDetail() {
 
     const fetchProduct = async ()=>{
 
+      setLoading(true)
+
       try{
 
-        const res = await axios.get(`/products/${id}`)
+        if(/^\d+$/.test(id)){
 
+          const res = await axios.get("/products")
+          const index = Number(id) - 1
+
+          if(index >= 0 && index < res.data.length){
+            setProduct(res.data[index])
+          }
+          else{
+            setProduct(null)
+          }
+
+          return
+        }
+
+        const res = await axios.get(`/products/${id}`)
         setProduct(res.data)
 
       }
@@ -46,13 +62,11 @@ export default function ProductDetail() {
   if(loading) return <p className="p-6">Loading...</p>
 
   if(!product) return <p className="p-6">Product not found</p>
-  
-  if(!product){
-    return <p className="p-6">Product not found</p>
-  }
+
   return(
 
     <div className="max-w-6xl mx-auto p-6">
+      {/* Back button */}
       <button onClick={()=>navigate(-1)}>
         Back
       </button>

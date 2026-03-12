@@ -1,13 +1,20 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import axios from "../api/axios";
 import toast from "react-hot-toast";
+import { useSearchParams } from "react-router-dom";
+
+const STATUS_OPTIONS = ["all", "in-stock", "out-of-stock"];
 
 function Inventory() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const rollbackRef = useRef({});
+
+  const rawStatus = searchParams.get("status") || "all";
+  const statusFilter = STATUS_OPTIONS.includes(rawStatus) ? rawStatus : "all";
 
   const fetchItems = async () => {
     setLoading(true);
@@ -26,6 +33,18 @@ function Inventory() {
   useEffect(() => {
     fetchItems();
   }, []);
+
+  useEffect(() => {
+    if (rawStatus !== statusFilter) {
+      const nextParams = new URLSearchParams(searchParams);
+      if (statusFilter === "all") {
+        nextParams.delete("status");
+      } else {
+        nextParams.set("status", statusFilter);
+      }
+      setSearchParams(nextParams, { replace: true });
+    }
+  }, [rawStatus, searchParams, setSearchParams, statusFilter]);
 
   const handleDelete = async (id) => {
     // backup state before mutation (for rollback safety)
@@ -102,6 +121,30 @@ function Inventory() {
     [items]
   );
 
+  const filteredItems = useMemo(() => {
+    if (statusFilter === "in-stock") {
+      return items.filter((item) => item.stock > 0);
+    }
+
+    if (statusFilter === "out-of-stock") {
+      return items.filter((item) => item.stock <= 0);
+    }
+
+    return items;
+  }, [items, statusFilter]);
+
+  const updateStatusFilter = (nextStatus) => {
+    const nextParams = new URLSearchParams(searchParams);
+
+    if (nextStatus === "all") {
+      nextParams.delete("status");
+    } else {
+      nextParams.set("status", nextStatus);
+    }
+
+    setSearchParams(nextParams);
+  };
+
   if (loading) {
     return (
       <div className="text-center py-20">
@@ -130,9 +173,46 @@ function Inventory() {
         <div>
           <h1 className="text-2xl font-semibold">Inventory Manager</h1>
           <p className="text-sm text-gray-500">
-            Total items: {items.length} · Total stock: {totalStock}
+            Total items: {filteredItems.length} of {items.length} · Total stock: {totalStock}
           </p>
         </div>
+
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => updateStatusFilter("all")}
+            className={`rounded-full px-3 py-1 text-sm font-medium transition ${
+              statusFilter === "all"
+                ? "bg-slate-900 text-white"
+                : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+            }`}
+          >
+            All
+          </button>
+          <button
+            onClick={() => updateStatusFilter("in-stock")}
+            className={`rounded-full px-3 py-1 text-sm font-medium transition ${
+              statusFilter === "in-stock"
+                ? "bg-emerald-600 text-white"
+                : "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+            }`}
+          >
+            In Stock
+          </button>
+          <button
+            onClick={() => updateStatusFilter("out-of-stock")}
+            className={`rounded-full px-3 py-1 text-sm font-medium transition ${
+              statusFilter === "out-of-stock"
+                ? "bg-red-600 text-white"
+                : "bg-red-50 text-red-700 hover:bg-red-100"
+            }`}
+          >
+            Out of Stock
+          </button>
+        </div>
+      </div>
+
+      <div className="mb-4 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+        Active URL filter: {statusFilter === "all" ? "none" : `?status=${statusFilter}`}
       </div>
 
       <div className="overflow-x-auto">
@@ -147,7 +227,7 @@ function Inventory() {
             </tr>
           </thead>
           <tbody>
-            {items.map((item) => (
+            {filteredItems.map((item) => (
               <tr
                 key={item._id}
                 className="border-b last:border-b-0 hover:bg-gray-50"
@@ -189,9 +269,9 @@ function Inventory() {
         </table>
       </div>
 
-      {items.length === 0 && (
+      {filteredItems.length === 0 && (
         <div className="mt-8 rounded border bg-yellow-50 p-4 text-sm text-yellow-800">
-          No items found.
+          No items found for this filter.
         </div>
       )}
     </div>

@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom"
 import { useAuthStore } from "../store/useAuthStore"
 import { useCartStore } from "../store/useCartStore"
-import { useContext } from "react"
+import { useContext, useState } from "react"
 import { ThemeContext } from "../context/ThemeContext"
+import CartDrawer from "./CartDrawer"
 
 export default function Navbar(){
 
@@ -10,11 +11,13 @@ export default function Navbar(){
  const logout = useAuthStore(s=>s.logout)
 
  const cartItems = useCartStore(s=>s.items)
+ const [isCartDrawerOpen,setIsCartDrawerOpen] = useState(false)
 
  const {config,toggleTheme,changeColor} = useContext(ThemeContext)
 
  return(
 
+  <>
   <nav className="flex justify-between items-center px-6 py-3 shadow-lg">
 
    {/* LEFT */}
@@ -79,9 +82,13 @@ export default function Navbar(){
 
     {/* cart */}
 
-    <Link to="/cart">
+    <button
+     type="button"
+     onClick={()=>setIsCartDrawerOpen(true)}
+     className="rounded-lg px-2 py-1 transition hover:bg-black/5"
+    >
      🛒 Cart ({cartItems.length})
-    </Link>
+    </button>
 
 
     {/* profile */}
@@ -147,6 +154,14 @@ export default function Navbar(){
    </div>
 
   </nav>
+
+  <CartDrawer
+   isOpen={isCartDrawerOpen}
+   onClose={()=>setIsCartDrawerOpen(false)}
+   accentColor={config.primaryColor}
+  />
+
+  </>
 
  )
 }
