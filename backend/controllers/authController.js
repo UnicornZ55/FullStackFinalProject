@@ -30,6 +30,7 @@ export const login = async (req, res) => {
 };
 
 export const logout = async (req, res) => {
+  const isProduction = process.env.NODE_ENV === "production";
   let token;
 
   if (req.cookies.jwt) {
@@ -47,8 +48,8 @@ export const logout = async (req, res) => {
 
   res.cookie("jwt", "", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "none",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
     maxAge: 0,
   });
 
