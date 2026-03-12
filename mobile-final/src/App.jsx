@@ -18,6 +18,8 @@ import Inventory from "./pages/Inventory"
 import DynamicForm from "./pages/DynamicForm"
 import LinkInBio from "./pages/LinkInBio"
 import CurrencyConverter from "./pages/CurrencyConverter"
+import LibraryHome from "./pages/LibraryHome"
+import LibraryDetails from "./pages/LibraryDetails"
 import { RegisterProvider } from "./context/RegisterContext"
 
 function Layout(){
@@ -62,6 +64,10 @@ function Layout(){
         <Route path="/link-in-bio" element={<LinkInBio />} />
 
         <Route path="/currency-converter" element={<CurrencyConverter />} />
+
+        <Route path="/library" element={<LibraryHome />} />
+
+        <Route path="/library/:workId" element={<LibraryDetails />} />
 
         <Route path="/cart" element={<Cart/>}/>
 

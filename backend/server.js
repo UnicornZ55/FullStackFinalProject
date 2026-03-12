@@ -22,9 +22,37 @@ connectDB()
 
 const app = express()
 
+const allowedOrigins = new Set(
+    [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        process.env.FRONTEND_ORIGIN,
+    ].filter(Boolean)
+)
+
+const lanViteOriginPattern =
+    /^http:\/\/(?:192\.168|10\.|169\.254|172\.(?:1[6-9]|2\d|3[0-1]))\.\d{1,3}\.\d{1,3}:5173$/
+
 app.use(express.json())
 app.use(cookieParser())
-app.use(cors({ origin: "http://localhost:5173", credentials: true }))
+app.use(
+    cors({
+        origin: (origin, callback) => {
+            if (!origin) {
+                callback(null, true)
+                return
+            }
+
+            if (allowedOrigins.has(origin) || lanViteOriginPattern.test(origin)) {
+                callback(null, true)
+                return
+            }
+
+            callback(new Error("Not allowed by CORS"))
+        },
+        credentials: true,
+    })
+)
 app.use(morgan("dev"))
 
 app.use("/api/auth", authRoutes)

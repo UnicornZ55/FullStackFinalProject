@@ -51,6 +51,10 @@ export default function Navbar(){
       Currency
     </Link>
 
+    <Link to="/library">
+      Library
+    </Link>
+
     {/* admin only */}
     {user?.role === "admin" && (
       <Link to="/dashboard">
