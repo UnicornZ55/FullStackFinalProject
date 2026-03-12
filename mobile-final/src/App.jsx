@@ -21,6 +21,7 @@ import CurrencyConverter from "./pages/CurrencyConverter"
 import LibraryHome from "./pages/LibraryHome"
 import LibraryDetails from "./pages/LibraryDetails"
 import MultiSourceDashboard from "./pages/MultiSourceDashboard"
+import OfflineTaskSynchronizer from "./pages/OfflineTaskSynchronizer"
 import { RegisterProvider } from "./context/RegisterContext"
 
 function Layout(){
@@ -71,6 +72,8 @@ function Layout(){
         <Route path="/library/:workId" element={<LibraryDetails />} />
 
         <Route path="/multi-source-dashboard" element={<MultiSourceDashboard />} />
+
+        <Route path="/offline-task-sync" element={<OfflineTaskSynchronizer />} />
 
         <Route path="/cart" element={<Cart/>}/>
 

@@ -29,9 +29,9 @@ export default function Navbar(){
      🐶 PetVerse
     </Link>
 
-    <Link to="/shop">
+    {/* <Link to="/shop">
      Shop
-    </Link>
+    </Link> */}
 
     {user?.role === "admin" || user?.role === "manager" ? (
       <Link to="/inventory">
@@ -39,9 +39,9 @@ export default function Navbar(){
       </Link>
     ) : null}
 
-    <Link to="/dynamic-form">
+    {/* <Link to="/dynamic-form">
       Join Us
-    </Link>
+    </Link> */}
 
     <Link to="/link-in-bio">
       LinkInBio
@@ -57,6 +57,10 @@ export default function Navbar(){
 
     <Link to="/multi-source-dashboard">
       Realtime Dashboard
+    </Link>
+
+    <Link to="/offline-task-sync">
+      Task Sync
     </Link>
 
     {/* admin only */}
@@ -87,9 +91,9 @@ export default function Navbar(){
 
     {/* cart */}
 
-    <Link to="/cart">
+    {/* <Link to="/cart">
      🛒 Cart ({cartItems.length})
-    </Link>
+    </Link> */}
 
 
     {/* profile */}
