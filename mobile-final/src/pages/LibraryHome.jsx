@@ -106,7 +106,7 @@ export default function LibraryHome() {
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-8">
-      <h1 className="text-2xl font-bold">Deep-Link Library Explorer</h1>
+      <h1 className="text-2xl font-bold">The Completed Guide to Pet Care</h1>
       <p className="mt-1 text-sm text-gray-500">Tap a book to view lazy-loaded details</p>
 
       <div className="mt-6 space-y-3">

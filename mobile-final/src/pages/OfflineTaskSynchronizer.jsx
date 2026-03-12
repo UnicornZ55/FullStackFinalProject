@@ -129,9 +129,9 @@ export default function OfflineTaskSynchronizer() {
     <main className="mx-auto max-w-4xl px-4 py-8">
       <header className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-bold">Offline-First Task Synchronizer</h1>
+          <h1 className="text-3xl font-bold">🐾 Paw Notes</h1>
           <p className="mt-1 text-sm text-gray-600">
-            Add tasks anytime. Pending tasks auto-sync in FIFO order when online.
+            Leave quick tasks and sync them later.
           </p>
         </div>
 

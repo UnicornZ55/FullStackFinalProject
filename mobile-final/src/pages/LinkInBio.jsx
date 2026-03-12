@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuthStore } from "../store/useAuthStore";
 
 const LINKS = ["GitHub", "Facebook", "LinkedIn"];
 
@@ -11,6 +12,15 @@ function getRandomHexColor() {
 
 export default function LinkInBio() {
   const [borderColor, setBorderColor] = useState("#2563eb");
+  const user = useAuthStore((s) => s.user);
+
+  const displayName =
+    user?.username ||
+    user?.user?.username ||
+    user?.name ||
+    user?.user?.name ||
+    user?.email?.split("@")[0] ||
+    "guest";
 
   const handlePress = (platform) => {
     setBorderColor(getRandomHexColor());
@@ -27,7 +37,7 @@ export default function LinkInBio() {
           style={{ borderColor }}
         />
 
-        <h1 className="mt-5 text-2xl font-bold">Your Name</h1>
+        <h1 className="mt-5 text-2xl font-bold">{displayName}</h1>
         <p className="mt-1 text-sm text-gray-600">Personal Link-in-Bio</p>
 
         <div className="mt-6 flex flex-col gap-3">

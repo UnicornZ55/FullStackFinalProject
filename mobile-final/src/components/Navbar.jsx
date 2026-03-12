@@ -56,11 +56,11 @@ export default function Navbar(){
     </Link>
 
     <Link to="/multi-source-dashboard">
-      Realtime Dashboard
+      Command Center
     </Link>
 
     <Link to="/offline-task-sync">
-      Task Sync
+      🐾 Paw Notes
     </Link>
 
     {/* admin only */}
