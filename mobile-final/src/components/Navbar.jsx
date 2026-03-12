@@ -55,6 +55,10 @@ export default function Navbar(){
       Library
     </Link>
 
+    <Link to="/multi-source-dashboard">
+      Realtime Dashboard
+    </Link>
+
     {/* admin only */}
     {user?.role === "admin" && (
       <Link to="/dashboard">

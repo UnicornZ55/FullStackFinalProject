@@ -20,6 +20,7 @@ import LinkInBio from "./pages/LinkInBio"
 import CurrencyConverter from "./pages/CurrencyConverter"
 import LibraryHome from "./pages/LibraryHome"
 import LibraryDetails from "./pages/LibraryDetails"
+import MultiSourceDashboard from "./pages/MultiSourceDashboard"
 import { RegisterProvider } from "./context/RegisterContext"
 
 function Layout(){
@@ -68,6 +69,8 @@ function Layout(){
         <Route path="/library" element={<LibraryHome />} />
 
         <Route path="/library/:workId" element={<LibraryDetails />} />
+
+        <Route path="/multi-source-dashboard" element={<MultiSourceDashboard />} />
 
         <Route path="/cart" element={<Cart/>}/>
 
