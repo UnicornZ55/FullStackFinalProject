@@ -15,7 +15,7 @@ export default function Navbar(){
 
  return(
 
-  <nav className="flex justify-between items-center px-6 py-3 shadow">
+  <nav className="flex justify-between items-center px-6 py-3 shadow-lg">
 
    {/* LEFT */}
 

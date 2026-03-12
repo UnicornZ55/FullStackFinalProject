@@ -28,7 +28,7 @@ function Layout(){
       className={`min-h-screen transition-colors duration-300 ${
         config.theme === "dark"
           ? "bg-gray-900 text-white"
-          : "bg-gray-100 text-black"
+          : "bg-[#E8CDB5] text-black"
       }`}
     >
 

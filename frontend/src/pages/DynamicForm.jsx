@@ -2,7 +2,7 @@ import { useEffect, useMemo } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import formSchema from "../data/formSchema.json";
+import formSchema from "../schemas/formSchema.json";
 import DynamicField from "../components/DynamicField";
 
 function buildZodSchema(field) {

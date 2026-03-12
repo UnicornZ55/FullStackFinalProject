@@ -20,7 +20,7 @@
     },
     {
       "type": "text",
-      "name": "phonenum",
+      "name": "phoneNumber",
       "label": "Phone Number",
       "validation": {
         "required": true
