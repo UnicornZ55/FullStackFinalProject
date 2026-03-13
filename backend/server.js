@@ -22,6 +22,18 @@ connectDB()
 
 const app = express()
 
+const contentTypeByExtension = {
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".png": "image/png",
+    ".gif": "image/gif",
+    ".webp": "image/webp",
+    ".pdf": "application/pdf",
+    ".txt": "text/plain; charset=utf-8",
+    ".json": "application/json",
+    ".csv": "text/csv; charset=utf-8",
+}
+
 const allowedOrigins = new Set(
     [
         "http://localhost:5173",
@@ -95,7 +107,7 @@ app.get("/scan",(req,res)=>{
 
 })
 
-app.get("/health",(req,res)=>{
+app.get("/health", rateLimit, (req,res)=>{
 
     const uptime = process.uptime()
 
@@ -123,7 +135,10 @@ app.get("/vault/:filename",(req,res)=>{
         return res.status(404).json({error:"File not found"})
     }
 
-    res.setHeader("Content-Type","application/octet-stream")
+    const extension = path.extname(req.params.filename).toLowerCase()
+    const contentType = contentTypeByExtension[extension] || "application/octet-stream"
+
+    res.setHeader("Content-Type", contentType)
 
     //function 3.4 C1
     const stream = fs.createReadStream(filePath)
