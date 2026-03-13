@@ -76,37 +76,36 @@ router.delete("/:id", protect, restrictTo("admin"), async(req,res)=>{
 
 })
 
-// // update current user (for C3 test)
+// update current user (for C3 test)
+router.put("/me", protect, async (req,res)=>{
 
-// router.put("/me", protect, async (req,res)=>{
+ try{
 
-//  try{
+  const user = await User.findById(req.user._id)
 
-//   const user = await User.findById(req.user._id)
+  if(!user){
+   return res.status(404).json({message:"User not found"})
+  }
 
-//   if(!user){
-//    return res.status(404).json({message:"User not found"})
-//   }
+  if(req.body.username){
+   user.username = req.body.username
+  }
 
-//   if(req.body.username){
-//    user.username = req.body.username
-//   }
+  await user.save()
 
-//   await user.save()
+  res.json({
+   message:"Profile updated",
+   username:user.username
+  })
 
-//   res.json({
-//    message:"Profile updated",
-//    username:user.username
-//   })
+ }
+ catch(err){
 
-//  }
-//  catch(err){
+  res.status(500).json({message:"Server error"})
 
-//   res.status(500).json({message:"Server error"})
+ }
 
-//  }
-
-// })
+})
 
 // change password (for C2 test)
 

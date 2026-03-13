@@ -1,5 +1,5 @@
-const WINDOW = 10 * 1000; // 10 seconds
-// const WINDOW = 15 * 60 * 1000; // 15 minutes
+// const WINDOW = 10 * 1000; // 10 seconds
+const WINDOW = 15 * 60 * 1000; // 15 minutes
 const LIMIT = 5;
 const CLEANUP_INTERVAL = 1000;
 

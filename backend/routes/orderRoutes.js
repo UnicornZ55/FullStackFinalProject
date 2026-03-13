@@ -44,6 +44,7 @@ router.post("/", protect, async (req,res)=>{
   )
 
   const totalPrice = product.price * quantity
+  // throw new Error("FORCE_ROLLBACK_TEST");
 
   const order = await Order.create([{
    userId:req.user._id,
