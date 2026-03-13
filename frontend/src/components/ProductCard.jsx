@@ -24,6 +24,10 @@ export default function ProductCard({ product }) {
           {product.name}
         </h3>
 
+        <span className="inline-flex rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-800">
+          {product.category || "Uncategorized"}
+        </span>
+
       </Link>
 
       <p className="text-gray-500 mb-2">

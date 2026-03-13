@@ -72,7 +72,7 @@ function buildRootSchema(schema) {
 }
 
 export default function DynamicForm() {
-  const dynamicSchema = useMemo(() => buildRootSchema(formSchema), []);
+  const dynamicSchema = useMemo(() => buildRootSchema(formSchema), [formSchema]);
 
   useEffect(() => {
     console.log("Dynamic schema (rebuild on JSON change):", dynamicSchema);

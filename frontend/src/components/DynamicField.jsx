@@ -77,6 +77,7 @@ export default function DynamicField({ field, parentName, formValues }) {
       );
 
     case "object":
+    case "section":
       return (
         <fieldset className="mb-4 rounded border border-gray-200 p-4">
           <legend className="px-2 text-sm font-semibold">

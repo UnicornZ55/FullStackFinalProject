@@ -63,6 +63,7 @@ export default function Shop() {
   );
 
   // Debounced search to avoid firing on every keystroke
+  // function 6.2 C5
   const debouncedSearch = useRef(
     debounce((value) => {
       setPage(1);

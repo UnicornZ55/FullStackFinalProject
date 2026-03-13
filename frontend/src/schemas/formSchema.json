@@ -3,15 +3,6 @@
   "fields": [
     {
       "type": "text",
-      "name": "fullName",
-      "label": "Full Name",
-      "validation": {
-        "required": true,
-        "min": 3
-      }
-    },
-    {
-      "type": "text",
       "name": "email",
       "label": "Email",
       "validation": {

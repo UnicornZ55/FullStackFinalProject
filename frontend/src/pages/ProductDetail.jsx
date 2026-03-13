@@ -119,6 +119,22 @@ export default function ProductDetail() {
 
             <p>Stock: {product.stock}</p>
 
+            {Array.isArray(product.tags) && product.tags.length > 0 && (
+              <div className="mt-4">
+                <p className="mb-2 font-medium text-gray-700">Tags</p>
+                <div className="flex flex-wrap gap-2">
+                  {product.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800"
+                    >
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
           </div>
 
         </div>
