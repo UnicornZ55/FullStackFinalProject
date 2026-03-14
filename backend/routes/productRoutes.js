@@ -11,7 +11,7 @@ router.get("/", async (req,res)=>{
 
  try{
 
-  const { category, brand, age, minPrice, maxPrice, search } = req.query
+  const { category, brand, age, minPrice, maxPrice, search, inStock } = req.query
 
   const filter = {}
 
@@ -67,6 +67,11 @@ router.get("/", async (req,res)=>{
     $options: "i"
    }
 
+  }
+
+  // only products that still have stock
+  if(inStock === "true" || inStock === "1"){
+   filter.stock = { $gt: 0 }
   }
 
   const products = await Product.find(filter)

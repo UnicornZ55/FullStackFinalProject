@@ -22,6 +22,13 @@ function sanitizeNumericInput(value) {
 export default function CurrencyConverter() {
   const [thbInput, setThbInput] = useState("");
 
+  const handleInputFocus = (event) => {
+    event.currentTarget.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+  };
+
   const thbAmount = useMemo(() => {
     const parsed = parseFloat(thbInput);
     if (!thbInput || Number.isNaN(parsed)) return 0;
@@ -61,6 +68,7 @@ export default function CurrencyConverter() {
             pattern="[0-9]*[.]?[0-9]*"
             value={thbInput}
             onChange={(e) => setThbInput(sanitizeNumericInput(e.target.value))}
+            onFocus={handleInputFocus}
             placeholder="Enter amount in THB"
             className="mt-2 w-full rounded-xl border border-white/60 bg-white/90 px-4 py-3 text-lg font-semibold text-slate-900 outline-none ring-0 placeholder:text-slate-500 focus:border-white"
           />

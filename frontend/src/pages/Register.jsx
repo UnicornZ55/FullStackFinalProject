@@ -174,6 +174,7 @@ function Step2({ onNext, onBack }) {
               className="w-full rounded border px-3 py-2"
             >
               <option value="">Select occupation</option>
+              <option value="User">User</option>
               <option value="Developer">Developer</option>
               <option value="Designer">Designer</option>
               <option value="Manager">Manager</option>

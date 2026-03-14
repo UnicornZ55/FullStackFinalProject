@@ -44,8 +44,13 @@ export default function Shop() {
       setError(null);
 
       try {
+        const params = { inStock: "true" };
+        if (query) {
+          params.search = query;
+        }
+
         const res = await axios.get("/products", {
-          params: query ? { search: query } : {},
+          params,
           signal: controller.signal,
         });
 
@@ -85,6 +90,7 @@ export default function Shop() {
   // 🔍 filter + search
   const filtered = useMemo(() => {
     return products.filter((p) => {
+      const matchStock = (p.stock || 0) > 0;
 
       const matchSearch =
         searchQuery === "" ||
@@ -106,6 +112,7 @@ export default function Shop() {
         p.price >= filters.minPrice && p.price <= filters.maxPrice;
 
       return (
+        matchStock &&
         matchSearch &&
         matchCategory &&
         matchBrand &&

@@ -33,8 +33,15 @@ export default function LinkInBio() {
         <img
           src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=400&auto=format&fit=crop"
           alt="Profile"
-          className="mx-auto h-[150px] w-[150px] rounded-full border-4 object-cover"
-          style={{ borderColor }}
+          className="mx-auto object-cover"
+          style={{
+            width: 150,
+            height: 150,
+            borderRadius: 75,
+            borderWidth: 4,
+            borderStyle: "solid",
+            borderColor,
+          }}
         />
 
         <h1 className="mt-5 text-2xl font-bold">{displayName}</h1>

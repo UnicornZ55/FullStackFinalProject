@@ -81,6 +81,7 @@ export default function DynamicForm() {
   const methods = useForm({
     resolver: zodResolver(dynamicSchema),
     mode: "onChange",
+    shouldUnregister: true,
     defaultValues: {},
   });
 
