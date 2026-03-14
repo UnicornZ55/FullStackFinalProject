@@ -1,8 +1,11 @@
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from "react-router-dom";
 import { RegisterContext } from "../context/RegisterContext";
 import { accountSchema, profileSchema } from "../schemas/registerSchemas";
+import { useAuthStore } from "../store/useAuthStore";
+import axios from "../api/axios";
 import debounce from "lodash.debounce";
 
 const blockedUsernames = ["admin", "root", "superuser"];
@@ -240,15 +243,43 @@ function Step2({ onNext, onBack }) {
 
 function Step3({ onBack }) {
   const { data, resetRegistration } = useContext(RegisterContext);
+  const navigate = useNavigate();
+  const login = useAuthStore((s) => s.login);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const flattened = useMemo(
     () => ({ ...data.account, ...data.profile }),
     [data]
   );
 
-  const handleSubmit = () => {
-    setSubmitted(true);
+  const handleSubmit = async () => {
+    setSubmitting(true);
+    setSubmitError("");
+
+    try {
+      const payload = {
+        username: data.account.username,
+        email: data.account.email,
+        password: data.account.password,
+      };
+
+      const res = await axios.post("/auth/register", payload);
+
+      login(res.data);
+      setSubmitted(true);
+      resetRegistration();
+
+      setTimeout(() => {
+        navigate("/");
+      }, 500);
+    } catch (err) {
+      setSubmitError(err?.response?.data?.message || "Register failed");
+      setSubmitted(false);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -271,7 +302,13 @@ function Step3({ onBack }) {
 
       {submitted && (
         <div className="rounded border border-green-300 bg-green-50 p-4 text-green-800">
-          Registration complete! (Simulated submission)
+          Registration complete!
+        </div>
+      )}
+
+      {submitError && (
+        <div className="rounded border border-red-300 bg-red-50 p-4 text-red-700">
+          {submitError}
         </div>
       )}
 
@@ -286,9 +323,10 @@ function Step3({ onBack }) {
         <button
           type="button"
           onClick={handleSubmit}
-          className="rounded bg-green-600 px-4 py-2 text-white"
+          disabled={submitting}
+          className="rounded bg-green-600 px-4 py-2 text-white disabled:opacity-50"
         >
-          Submit
+          {submitting ? "Submitting..." : "Submit"}
         </button>
       </div>
 
