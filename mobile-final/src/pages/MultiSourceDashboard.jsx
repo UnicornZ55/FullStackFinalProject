@@ -95,7 +95,10 @@ export default function MultiSourceDashboard() {
       setCrypto(nextCrypto);
       anyFreshSuccess = true;
     } else {
-      setCryptoError(cryptoResult.reason?.userMessage || "Crypto service unavailable");
+      // If cache exists, keep showing cached value without error banner.
+      if (!nextCrypto) {
+        setCryptoError(cryptoResult.reason?.userMessage || "Crypto service unavailable");
+      }
     }
 
     if (weatherResult.status === "fulfilled") {
@@ -107,7 +110,10 @@ export default function MultiSourceDashboard() {
       setWeather(nextWeather);
       anyFreshSuccess = true;
     } else {
-      setWeatherError(weatherResult.reason?.userMessage || "Weather service unavailable");
+      // If cache exists, keep showing cached value without error banner.
+      if (!nextWeather) {
+        setWeatherError(weatherResult.reason?.userMessage || "Weather service unavailable");
+      }
     }
 
     if (anyFreshSuccess) {
