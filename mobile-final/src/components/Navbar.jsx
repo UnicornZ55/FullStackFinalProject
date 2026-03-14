@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { Link, useLocation } from "react-router-dom"
 import { useAuthStore } from "../store/useAuthStore"
 import { useCartStore } from "../store/useCartStore"
 import { useContext } from "react"
@@ -12,152 +13,111 @@ export default function Navbar(){
  const cartItems = useCartStore(s=>s.items)
 
  const {config,toggleTheme} = useContext(ThemeContext)
+ const location = useLocation()
+ const [menuOpen, setMenuOpen] = useState(false)
+
+ useEffect(()=>{
+  setMenuOpen(false)
+ },[location.pathname])
 
  return(
 
-  <nav className="flex justify-between items-center px-6 py-3 shadow-lg">
-
-   {/* LEFT */}
-
-   <div className="flex gap-5 items-center">
-
+  <nav className="sticky top-0 z-50 border-b border-black/10 bg-white/90 px-3 py-2 shadow-sm backdrop-blur dark:border-white/10 dark:bg-gray-900/90">
+   <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-2">
     <Link
      to="/"
-     className="font-bold text-lg"
+     className="truncate text-base font-bold sm:text-lg"
      style={{color:config.primaryColor}}
     >
      🐶 PetVerse
     </Link>
 
-    {/* <Link to="/shop">
-     Shop
-    </Link> */}
-
-    {user?.role === "admin" || user?.role === "manager" ? (
-      <Link to="/inventory">
-        Inventory
-      </Link>
-    ) : null}
-
-    {/* <Link to="/dynamic-form">
-      Join Us
-    </Link> */}
-
-    <Link to="/link-in-bio">
-      LinkInBio
-    </Link>
-
-    <Link to="/currency-converter">
-      Currency
-    </Link>
-
-    <Link to="/library">
-      Library
-    </Link>
-
-    <Link to="/multi-source-dashboard">
-      Command Center
-    </Link>
-
-    <Link to="/offline-task-sync">
-      🐾 Paw Notes
-    </Link>
-
-    {/* admin only */}
-    {user?.role === "admin" && (
-      <Link to="/dashboard">
-        Dashboard
-      </Link>
-    )}
-
-    <Link to="/feedback">
-     Feedback
-    </Link>
-
-   </div>
-
-   {/* RIGHT */}
-
-   <div className="flex gap-4 items-center">
-
-    {/* theme toggle */}
-
-    <button
-     onClick={toggleTheme}
-     className="border px-2 py-1 rounded"
-    >
-     {config.theme==="dark"?"Light":"Dark"}
-    </button>
-
-    {/* cart */}
-
-    <Link to="/cart">
-     🛒 Cart ({cartItems.length})
-    </Link>
-
-
-    {/* profile */}
-
-    {user && (
-
-     <div className="relative group">
-
-      <img
-       src="https://cdn-icons-png.flaticon.com/512/847/847969.png"
-       className="w-8 h-8 rounded-full cursor-pointer"
-      />
-
-      {/* hover email */}
-
-      <div
-       className="absolute right-0 top-10 text-white shadow px-3 py-1 text-sm rounded opacity-0 group-hover:opacity-100 transition"
-       style={{background:config.primaryColor}}
-      >
-
-       {user.email}
-
-      </div>
-
-     </div>
-
-    )}
-
-
-    {/* auth buttons */}
-
-    {user ? (
+    <div className="flex items-center gap-2">
+     <Link
+      to="/cart"
+      className="rounded-lg border border-black/15 px-2 py-1 text-sm font-medium dark:border-white/20"
+      aria-label="Open cart"
+     >
+      🛒 {cartItems.length}
+     </Link>
 
      <button
-      onClick={logout}
-      className="text-white px-3 py-1 rounded"
-      style={{background:config.primaryColor}}
+      onClick={()=>setMenuOpen(prev=>!prev)}
+      className="rounded-lg border border-black/15 px-3 py-1.5 text-sm font-semibold dark:border-white/20"
+      aria-expanded={menuOpen}
+      aria-controls="mobile-nav-menu"
+      aria-label="Toggle navigation menu"
      >
-      Logout
+      {menuOpen ? "Close" : "Menu"}
      </button>
-
-    ) : (
-
-     <>
-      <Link
-       to="/register"
-       className="text-white px-3 py-1 rounded"
-       style={{background:config.primaryColor}}
-      >
-       Register
-      </Link>
-      <Link
-       to="/login"
-       className="text-white px-3 py-1 rounded"
-       style={{background:config.primaryColor}}
-      >
-       Login
-      </Link>
-     </>
-
-    )}
-
+    </div>
    </div>
 
+   {menuOpen && (
+    <div id="mobile-nav-menu" className="mx-auto mt-3 w-full max-w-6xl rounded-xl border border-black/10 bg-white p-3 shadow-lg dark:border-white/10 dark:bg-gray-900">
+     <div className="grid grid-cols-2 gap-2 text-sm sm:grid-cols-3">
+      <Link to="/" className="rounded-lg bg-black/5 px-3 py-2 font-medium dark:bg-white/10">Home</Link>
+      <Link to="/shop" className="rounded-lg bg-black/5 px-3 py-2 font-medium dark:bg-white/10">Shop</Link>
+      <Link to="/dynamic-form" className="rounded-lg bg-black/5 px-3 py-2 font-medium dark:bg-white/10">Join Us</Link>
+      <Link to="/link-in-bio" className="rounded-lg bg-black/5 px-3 py-2 font-medium dark:bg-white/10">LinkInBio</Link>
+      <Link to="/currency-converter" className="rounded-lg bg-black/5 px-3 py-2 font-medium dark:bg-white/10">Currency</Link>
+      <Link to="/library" className="rounded-lg bg-black/5 px-3 py-2 font-medium dark:bg-white/10">Library</Link>
+      <Link to="/multi-source-dashboard" className="rounded-lg bg-black/5 px-3 py-2 font-medium dark:bg-white/10">Command Center</Link>
+      <Link to="/offline-task-sync" className="rounded-lg bg-black/5 px-3 py-2 font-medium dark:bg-white/10">Paw Notes</Link>
+      <Link to="/feedback" className="rounded-lg bg-black/5 px-3 py-2 font-medium dark:bg-white/10">Feedback</Link>
+
+      {(user?.role === "admin" || user?.role === "manager") && (
+       <Link to="/inventory" className="rounded-lg bg-black/5 px-3 py-2 font-medium dark:bg-white/10">Inventory</Link>
+      )}
+
+      {user?.role === "admin" && (
+       <Link to="/dashboard" className="rounded-lg bg-black/5 px-3 py-2 font-medium dark:bg-white/10">Dashboard</Link>
+      )}
+     </div>
+
+     <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-black/10 pt-3 dark:border-white/10">
+      <button
+       onClick={toggleTheme}
+       className="rounded-lg border border-black/15 px-3 py-2 text-sm font-semibold dark:border-white/20"
+      >
+       Theme: {config.theme === "dark" ? "Light" : "Dark"}
+      </button>
+
+      {user && (
+       <span className="max-w-full truncate text-xs text-gray-600 dark:text-gray-300">
+        {user.email}
+       </span>
+      )}
+
+      {user ? (
+       <button
+        onClick={logout}
+        className="rounded-lg px-3 py-2 text-sm font-semibold text-white"
+        style={{background:config.primaryColor}}
+       >
+        Logout
+       </button>
+      ) : (
+       <div className="flex gap-2">
+        <Link
+         to="/register"
+         className="rounded-lg px-3 py-2 text-sm font-semibold text-white"
+         style={{background:config.primaryColor}}
+        >
+         Register
+        </Link>
+        <Link
+         to="/login"
+         className="rounded-lg px-3 py-2 text-sm font-semibold text-white"
+         style={{background:config.primaryColor}}
+        >
+         Login
+        </Link>
+       </div>
+      )}
+     </div>
+    </div>
+   )}
   </nav>
 
  )
