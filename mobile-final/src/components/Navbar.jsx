@@ -91,9 +91,9 @@ export default function Navbar(){
 
     {/* cart */}
 
-    {/* <Link to="/cart">
+    <Link to="/cart">
      🛒 Cart ({cartItems.length})
-    </Link> */}
+    </Link>
 
 
     {/* profile */}
